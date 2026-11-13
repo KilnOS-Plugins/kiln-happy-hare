@@ -1,0 +1,36 @@
+# Every push and pull request: build the plugin tree from the pinned Happy
+# Hare, run Happy Hare's test suite on it, check the tree. Nothing is
+# published (release.yml does that for a tag).
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch Happy Hare and Klipper
+        run: |
+          . ./happy-hare.version
+          git clone -q --depth 1 --branch "$HH_REF" "$HH_REPO" hh
+          git init -q klipper
+          git -C klipper fetch -q --depth 1 "$KLIPPER_REPO" "$KLIPPER_REF"
+          git -C klipper checkout -q FETCH_HEAD
+      - name: Happy Hare tests
+        run: make -C hh test ALL=1
+      - name: Build
+        run: tools/build.sh out hh
+      - name: Check
+        run: python3 tools/check.py out klipper
+      - uses: actions/upload-artifact@v4
+        with:
+          name: happy-hare-plugin
+          path: out
