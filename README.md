@@ -13,7 +13,7 @@ IFS. What it does and how to install it: [plugin/README.md](plugin/README.md).
   clones this branch into `/data/ad5x/plugins/happy-hare`, and Moonraker's
   update manager pulls it. Don't commit to it by hand.
 
-Happy Hare comes from [jolting/Happy-Hare](https://github.com/jolting/Happy-Hare),
+Happy Hare comes from [KilnOS-Plugins/Happy-Hare](https://github.com/KilnOS-Plugins/Happy-Hare),
 branch `kiln`: v4.1.0 with the AD5X IFS changes (linked sensors, a gate
 homing option for an MMU without gate sensors, cam selector homing, parking
 at the toolhead, and an encoder read from one analog sensor per gate).
