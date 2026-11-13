@@ -1,6 +1,6 @@
 # Happy Hare the release is built from (tools/build.sh)
 HH_REPO=https://github.com/jolting/Happy-Hare.git
-HH_REF=v4.1.0-kiln.1
+HH_REF=v4.1.0-kiln.2
 # Klipper of the Kiln OS release tested with (tools/check.py: module names)
 KLIPPER_REPO=https://github.com/Klipper3d/klipper.git
 KLIPPER_REF=29d4ec2d6d840ee839333306003a400da186d41d
