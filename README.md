@@ -28,8 +28,9 @@ su klipper -s /bin/sh -c 'git clone -b release https://github.com/KilnOS-Plugins
 ```
 
 then `ENABLE_PLUGIN NAME=happy-hare` (or the switch under Settings > Plugins).
-Fluidd lists it under updates afterwards. `DISABLE_PLUGIN NAME=happy-hare`
-goes back to Kiln's IFS driver.
+Fluidd lists it under updates afterwards; after an update, `RESTART` Klipper
+(Kiln OS's Moonraker can't restart it for you).
+`DISABLE_PLUGIN NAME=happy-hare` goes back to Kiln's IFS driver.
 
 ## Limits
 
