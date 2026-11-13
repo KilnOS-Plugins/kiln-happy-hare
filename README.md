@@ -29,12 +29,14 @@ Without `HAPPY_HARE_DIR` it clones the pinned tag into `hh/`.
 
 ## Releasing
 
-1. Tag the Happy Hare fork's `kiln` branch (`v4.1.0-kiln.N`) and set
-   `HH_REF` in `happy-hare.version`.
-2. Tag `main` with the same name and push the tag.
+1. When Happy Hare changes: tag the fork's `kiln` branch (`v4.1.0-kiln.N`)
+   and set `HH_REF` in `happy-hare.version`.
+2. Tag `main` `v<Happy Hare version>.<revision>` (`v4.1.0.4`, `v4.1.0.5`, ...:
+   a version Moonraker can read and order) and push the tag.
 
 The release workflow runs Happy Hare's tests, builds and checks the tree,
-commits it to `release` and attaches a zip to the GitHub release. The CI
+commits it to `release`, moves the tag onto that commit (Fluidd shows the
+version from it) and attaches a zip to the GitHub release. The CI
 workflow does the same for every push and pull request, without publishing.
 
 ## License

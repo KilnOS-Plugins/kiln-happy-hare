@@ -1,4 +1,4 @@
-# A tag (v4.1.0-kiln.1, ...) on main: build and check as ci.yml does, then
+# A tag (v4.1.0.4, ...: Happy Hare's version and the plugin's revision) on main: build and check as ci.yml does, then
 # commit the built tree to the release branch (what Kiln OS's
 # INSTALL_PLUGIN clones and Fluidd's update manager pulls) and attach a zip
 # of it to a GitHub release, for installing by hand.
@@ -47,10 +47,16 @@ jobs:
           git -C rel add -A
           git -C rel commit -q -m "happy-hare $GITHUB_REF_NAME" -m "$(cat out/BUILD)"
           git -C rel push -q origin HEAD:refs/heads/release
+          # The version tag moves onto the built commit, so it is reachable from
+          # the release branch (Moonraker reads its version there); BUILD and the
+          # commit message name the source commit. A push with the workflow's
+          # token starts no workflow, so this doesn't release again.
+          git -C rel tag -f "$GITHUB_REF_NAME"
+          git -C rel push -q -f origin "refs/tags/$GITHUB_REF_NAME"
       - name: GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           (cd out && zip -qr "../happy-hare-$GITHUB_REF_NAME.zip" .)
-          gh release create "$GITHUB_REF_NAME" "happy-hare-$GITHUB_REF_NAME.zip" \
+          gh release create "$GITHUB_REF_NAME" --verify-tag "happy-hare-$GITHUB_REF_NAME.zip" \
             --title "happy-hare $GITHUB_REF_NAME" --notes-file out/BUILD
