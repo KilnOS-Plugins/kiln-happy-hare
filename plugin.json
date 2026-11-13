@@ -1,9 +1,9 @@
 {
   "name": "happy-hare",
   "description": "Happy Hare v4 MMU software for the Flashforge AD5X IFS",
-  "version": "v4.1.0-kiln.2",
+  "version": "v4.1.0-kiln.3",
   "author": "moggieuk (Happy Hare), Hunter Laux (AD5X IFS)",
-  "url": "https://github.com/jolting/kiln-happy-hare",
+  "url": "https://github.com/KilnOS-Plugins/kiln-happy-hare",
   "requires_os": "1.5",
   "requires": [],
   "conflicts": [],

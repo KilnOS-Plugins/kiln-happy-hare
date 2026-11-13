@@ -24,7 +24,7 @@ AD5X IFS on Kiln OS, in place of Kiln's own `[ifs]` driver.
 
 ```
 cd /data/ad5x/plugins
-su klipper -s /bin/sh -c 'git clone -b release https://github.com/jolting/kiln-happy-hare.git happy-hare'
+su klipper -s /bin/sh -c 'git clone -b release https://github.com/KilnOS-Plugins/kiln-happy-hare.git happy-hare'
 ```
 
 then `ENABLE_PLUGIN NAME=happy-hare` (or the switch under Settings > Plugins).
