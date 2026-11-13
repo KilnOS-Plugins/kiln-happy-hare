@@ -26,7 +26,7 @@ jobs:
           git -C klipper fetch -q --depth 1 "$KLIPPER_REPO" "$KLIPPER_REF"
           git -C klipper checkout -q FETCH_HEAD
       - name: Happy Hare tests
-        run: make -C hh test ALL=1
+        run: cd hh && make test ALL=1
       - name: Build
         run: VERSION="$GITHUB_REF_NAME" tools/build.sh out hh
       - name: Check
