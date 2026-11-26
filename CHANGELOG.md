@@ -41,6 +41,8 @@ What changed for people using the plugin. A release's notes on GitHub come from 
     sensors are Klipper filament sensors too, and Klipper paused on any of them going empty. Happy
     Hare handles them: a runout of the slot in use still pauses (or swaps to the next spool),
     any other slot is only marked empty.
+  - **The IFS gear no longer runs at full current while printing.** Synced to the extruder it now
+    runs at half its run current (`sync_gear_current: 50`, Happy Hare's default), not 100%.
   - A slot parked above the toolhead stays parked after a recovery, instead of being pulled back the
     whole bowden.
   - mmu.log no longer writes every line twice after a Klipper restart.
