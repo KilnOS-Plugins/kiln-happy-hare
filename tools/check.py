@@ -6,7 +6,7 @@ usage: tools/check.py OUT [KLIPPER_DIR]
 - plugin.json: valid, the fields Kiln OS reads, a version filled in
 - every .py compiles
 - plugin.cfg's includes exist; the IFS config parses, has the Happy Hare
-  sections, and an analog_pin_<n> for each of the unit's num_gates
+  sections, and an encoder with an analog_pin for each of the unit's num_gates
 - with KLIPPER_DIR: no module in extras/ that Klipper already has (Kiln OS
   refuses a plugin module whose name Klipper's extras already use)
 """
@@ -56,15 +56,21 @@ def main(out, klipper=None):
 
     cfg = read_cfg(os.path.join(out, 'mmu-flashforge-ifs.cfg'))
     for sect in ('mmu_machine', 'mmu_parameters', 'mmu_unit ifs', 'mmu_unit_parameters ifs',
-                 'mmu_encoder ifs_encoder', 'mmu_toolhead default'):
+                 'mmu_toolhead default'):
         if not cfg.has_section(sect):
             fail('mmu-flashforge-ifs.cfg: no [%s]' % sect)
-    if cfg.has_section('mmu_unit ifs') and cfg.has_section('mmu_encoder ifs_encoder'):
+    if cfg.has_section('mmu_unit ifs'):
+        # One encoder per gate, each reading its gate's wheel on an analog_pin
         gates = cfg.getint('mmu_unit ifs', 'num_gates')
-        enc = dict(cfg.items('mmu_encoder ifs_encoder'))
-        missing = [g for g in range(gates) if not enc.get('analog_pin_%d' % g)]
-        if missing:
-            fail('[mmu_encoder ifs_encoder]: no analog_pin_%s' % ', analog_pin_'.join(map(str, missing)))
+        names = [n.strip() for n in cfg.get('mmu_unit ifs', 'encoder', fallback='').split(',') if n.strip()]
+        if len(names) != gates:
+            fail('[mmu_unit ifs] encoder: %d names for %d gates' % (len(names), gates))
+        for name in names:
+            sect = 'mmu_encoder %s' % name
+            if not cfg.has_section(sect):
+                fail('mmu-flashforge-ifs.cfg: no [%s]' % sect)
+            elif not cfg.get(sect, 'analog_pin', fallback=''):
+                fail('[%s]: no analog_pin' % sect)
 
     for need in ('extras/mmu/__init__.py', 'extras/mmu_machine.py',
                  'extras/mmu/unit/mmu_analog_counter.py', 'moonraker/components/mmu_server.py'):

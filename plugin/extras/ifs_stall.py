@@ -1,7 +1,8 @@
 # The IFS stall sensors as temperature sensors, so Fluidd graphs them.
-# Happy Hare's analog encoder ([mmu_encoder] analog_pin_0...3) owns the four
-# ADC pins, so the readings come from it: sensor_type ifs_stall, slot 1-4,
-# value in raw 12-bit counts (0-4095), as Kiln's ifs_spoolN_stall.
+# Each slot's wheel is a Happy Hare analog encoder ([mmu_encoder
+# ifs_encoder_<slot-1>], analog_pin) that owns the ADC pin, so the reading
+# comes from it: sensor_type ifs_stall, slot 1-4, value in raw 12-bit counts
+# (0-4095), as Kiln's ifs_spoolN_stall.
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
 
@@ -13,7 +14,7 @@ class IfsStallSensor:
         self.printer = config.get_printer()
         self.reactor = self.printer.get_reactor()
         self.slot = config.getint('slot', minval=1, maxval=4)
-        self.encoder_name = 'mmu_encoder ' + config.get('encoder', 'ifs_encoder')
+        self.encoder_name = 'mmu_encoder ' + config.get('encoder', 'ifs_encoder_%d' % (self.slot - 1))
         self.callback = None
         self.counter = None
         self.mcu = None
@@ -37,9 +38,9 @@ class IfsStallSensor:
         self.reactor.update_timer(self.timer, self.reactor.NOW)
 
     def _sample(self, eventtime):
-        values = getattr(self.counter, 'values_raw', None)
-        if values and self.slot <= len(values):
-            self.temp = float(values[self.slot - 1]) * 4095.
+        value = getattr(self.counter, 'value', None)
+        if value is not None:
+            self.temp = float(value) * 4095.
             if self.callback is not None:
                 self.callback(self.mcu.estimated_print_time(eventtime),
                               self.temp)
