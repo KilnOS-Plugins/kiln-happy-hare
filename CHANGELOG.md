@@ -37,6 +37,10 @@ What changed for people using the plugin. A release's notes on GitHub come from 
   change in a print left purging to the slicer and went from the load straight back to the part.
   The slicer's own purge (prime tower) still runs as well; you can make it smaller.
 - Fixes:
+  - **Taking a spool out of a slot that isn't printing no longer pauses the print.** The slots'
+    sensors are Klipper filament sensors too, and Klipper paused on any of them going empty. Happy
+    Hare handles them: a runout of the slot in use still pauses (or swaps to the next spool),
+    any other slot is only marked empty.
   - A slot parked above the toolhead stays parked after a recovery, instead of being pulled back the
     whole bowden.
   - mmu.log no longer writes every line twice after a Klipper restart.

@@ -72,6 +72,13 @@ def main(out, klipper=None):
             elif not cfg.get(sect, 'analog_pin', fallback=''):
                 fail('[%s]: no analog_pin' % sect)
 
+    # Happy Hare handles the slots' sensors: Klipper's own pause on runout would pause the
+    # print when any slot goes empty, also one that isn't printing
+    for sect in cfg.sections():
+        if sect.startswith(('adc_filament_sensor mmu_', 'filament_switch_sensor mmu_')):
+            if cfg.get(sect, 'pause_on_runout', fallback='True').strip().lower() not in ('false', '0', 'no'):
+                fail('[%s]: pause_on_runout must be False (Happy Hare handles it)' % sect)
+
     for need in ('extras/mmu/__init__.py', 'extras/mmu_machine.py',
                  'extras/mmu/unit/mmu_analog_counter.py', 'moonraker/components/mmu_server.py'):
         if not os.path.exists(os.path.join(out, need)):
