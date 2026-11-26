@@ -14,9 +14,11 @@ IFS. What it does and how to install it: [plugin/README.md](plugin/README.md).
   update manager pulls it. Don't commit to it by hand.
 
 Happy Hare comes from [KilnOS-Plugins/Happy-Hare](https://github.com/KilnOS-Plugins/Happy-Hare),
-branch `kiln`: v4.1.0 with the AD5X IFS changes (linked sensors, a gate
-homing option for an MMU without gate sensors, cam selector homing, parking
-at the toolhead, and an encoder read from one analog sensor per gate).
+branch `kiln-4.2.0`: v4.2.0 with the AD5X IFS changes (linked sensors, a
+gate homing option for an MMU without gate sensors, cam selector homing,
+parking at the toolhead with preload to the park point, an analog encoder
+per gate with interpolation). The encoder changes are also offered upstream
+(moggieuk/Happy-Hare#1606). `kiln` is the v4.1.0 branch.
 
 ## Building
 
@@ -29,9 +31,11 @@ Without `HAPPY_HARE_DIR` it clones the pinned tag into `hh/`.
 
 ## Releasing
 
-1. When Happy Hare changes: tag the fork's `kiln` branch (`v4.1.0-kiln.N`)
-   and set `HH_REF` in `happy-hare.version`.
-2. Tag `main` `v<Happy Hare version>.<revision>` (`v4.1.0.4`, `v4.1.0.5`, ...:
+1. When Happy Hare changes: tag the fork's branch (`kiln-4.2.0`:
+   `v4.2.0-kiln.N`) and set `HH_REF` in `happy-hare.version`.
+2. Give the release its section in [CHANGELOG.md](CHANGELOG.md)
+   (`## v4.2.0.1 (date)`): the GitHub release's notes come from it.
+3. Tag `main` `v<Happy Hare version>.<revision>` (`v4.2.0.1`, `v4.2.0.2`, ...:
    a version Moonraker can read and order) and push the tag.
 
 The release workflow runs Happy Hare's tests, builds and checks the tree,

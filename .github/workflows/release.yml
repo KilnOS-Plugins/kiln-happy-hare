@@ -58,5 +58,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           (cd out && zip -qr "../happy-hare-$GITHUB_REF_NAME.zip" .)
+          # The notes: this tag's section of CHANGELOG.md ("## vX.Y.Z.N ..." up to the next
+          # "## "), then the build line. Without a section, the build line alone.
+          awk -v tag="$GITHUB_REF_NAME" '
+            /^## / { on = ($2 == tag) ; next }
+            on' CHANGELOG.md > notes.md
+          if [ -s notes.md ]; then printf '\n---\n' >> notes.md; fi
+          cat out/BUILD >> notes.md
           gh release create "$GITHUB_REF_NAME" --verify-tag "happy-hare-$GITHUB_REF_NAME.zip" \
-            --title "happy-hare $GITHUB_REF_NAME" --notes-file out/BUILD
+            --title "happy-hare $GITHUB_REF_NAME" --notes-file notes.md
