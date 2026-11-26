@@ -34,6 +34,9 @@ jobs:
       - name: Check
         run: python3 tools/check.py out klipper
       - name: Commit to the release branch
+        # Not for a release candidate (v...-rc...): Kiln OS installs and updates the plugin
+        # from this branch, so a candidate is only a GitHub pre-release
+        if: ${{ !contains(github.ref_name, '-rc') }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -61,11 +64,25 @@ jobs:
         run: |
           (cd out && zip -qr "../happy-hare-$GITHUB_REF_NAME.zip" .)
           # The notes: this tag's section of CHANGELOG.md ("## vX.Y.Z.N ..." up to the next
-          # "## "), then the build line. Without a section, the build line alone.
-          awk -v tag="$GITHUB_REF_NAME" '
-            /^## / { on = ($2 == tag) ; next }
+          # "## "; a candidate vX.Y.Z.N-rcM uses vX.Y.Z.N's), then the build line. Without a
+          # section, the build line alone.
+          base="${GITHUB_REF_NAME%%-rc*}"
+          awk -v tag="$GITHUB_REF_NAME" -v base="$base" '
+            /^## / { on = ($2 == tag || $2 == base) ; next }
             on' CHANGELOG.md > notes.md
+          case "$GITHUB_REF_NAME" in *-rc*)
+            { printf '%s\n\n' "**Release candidate.** Kiln OS doesn't offer it as an update: install the zip by hand on the printer (SSH), keeping the current plugin to go back to:"
+              printf '%s\n' '```' \
+                     'mv /data/ad5x/plugins/happy-hare /data/ad5x/happy-hare.prev' \
+                     "python3 -m zipfile -e /tmp/happy-hare-$GITHUB_REF_NAME.zip /data/ad5x/plugins/happy-hare" \
+                     'chown -R klipper:klipper /data/ad5x/plugins/happy-hare' \
+                     '```'
+              printf '%s\n\n' "(copy the zip to \`/tmp\` first), then \`RESTART\`. To go back: delete \`/data/ad5x/plugins/happy-hare\`, move \`/data/ad5x/happy-hare.prev\` back, \`RESTART\`."
+              cat notes.md; } > notes.rc && mv notes.rc notes.md ;;
+          esac
           if [ -s notes.md ]; then printf '\n---\n' >> notes.md; fi
           cat out/BUILD >> notes.md
-          gh release create "$GITHUB_REF_NAME" --verify-tag "happy-hare-$GITHUB_REF_NAME.zip" \
+          prerelease=""
+          case "$GITHUB_REF_NAME" in *-rc*) prerelease="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" $prerelease --verify-tag "happy-hare-$GITHUB_REF_NAME.zip" \
             --title "happy-hare $GITHUB_REF_NAME" --notes-file notes.md
