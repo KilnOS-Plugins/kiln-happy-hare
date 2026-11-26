@@ -1,2 +1,4 @@
 /out/
 /hh/
+__pycache__/
+*.pyc

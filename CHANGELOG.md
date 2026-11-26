@@ -41,18 +41,10 @@ What changed for people using the plugin. A release's notes on GitHub come from 
     whole bowden.
   - mmu.log no longer writes every line twice after a Klipper restart.
 
-**After updating:** the four new encoders don't read the old shared calibration. Until each has one,
-Happy Hare reminds you to calibrate. Either run `MMU_CALIBRATE_ENCODER` with each slot selected, or
-copy the old value (the wheels are the same part) once in the console, then `RESTART`:
-
-```
-SAVE_VARIABLE VARIABLE=mmu_ifs_encoder_0_encoder_resolution VALUE=5.2632
-SAVE_VARIABLE VARIABLE=mmu_ifs_encoder_1_encoder_resolution VALUE=5.2632
-SAVE_VARIABLE VARIABLE=mmu_ifs_encoder_2_encoder_resolution VALUE=5.2632
-SAVE_VARIABLE VARIABLE=mmu_ifs_encoder_3_encoder_resolution VALUE=5.2632
-```
-
-(use your own value from `mmu_ifs_encoder_encoder_resolution` in `variables.cfg` if it differs).
+**After updating:** the four new encoders start with the old shared calibration: the plugin copies it
+(`mmu_ifs_encoder_encoder_resolution`, and the clog detection length) to each slot's encoder at the
+first start, once, and never over a slot's own value. The wheels are the same part, but for each
+wheel's own value run `MMU_CALIBRATE_ENCODER` with that slot selected.
 
 Tested on Kiln OS v1.0.0.
 

@@ -27,6 +27,8 @@ jobs:
           git -C klipper checkout -q FETCH_HEAD
       - name: Happy Hare tests
         run: cd hh && make test ALL=1
+      - name: Plugin tests
+        run: python3 -m unittest discover -s tests
       - name: Build
         run: VERSION="$GITHUB_REF_NAME" tools/build.sh out hh
       - name: Check
