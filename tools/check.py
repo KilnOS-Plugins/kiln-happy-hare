@@ -79,6 +79,23 @@ def main(out, klipper=None):
             if cfg.get(sect, 'pause_on_runout', fallback='True').strip().lower() not in ('false', '0', 'no'):
                 fail('[%s]: pause_on_runout must be False (Happy Hare handles it)' % sect)
 
+    # Every macro Happy Hare calls unconditionally is defined: the plugin doesn't load Happy
+    # Hare's own mmu_sequence.cfg, so a missing one is an "Unknown command" mid-print
+    params = os.path.join(out, 'extras', 'mmu', 'mmu_machine_parameters.py')
+    if os.path.exists(params):
+        guarded = {'action_changed_macro', 'clear_position_macro', 'mmu_event_macro',
+                   'print_state_changed_macro',                  # call_macro_if_defined
+                   'load_sequence_macro', 'unload_sequence_macro',  # only with gcode_*_sequence
+                   'pause_macro'}                                # Klipper's PAUSE
+        defined = {s.split(None, 1)[1] for s in cfg.sections() if s.startswith('gcode_macro ')}
+        for param, default in re.findall(r"ParamSpec\('([a-z_]+_macro)',\s*'str',\s*'([^']*)'",
+                                         open(params).read()):
+            macro = cfg.get('mmu_parameters', param, fallback=default).strip()
+            if param not in guarded and macro and macro not in defined:
+                fail('%s: Happy Hare calls %s, which no [gcode_macro] defines' % (param, macro))
+    else:
+        fail('missing extras/mmu/mmu_machine_parameters.py')
+
     for need in ('extras/mmu/__init__.py', 'extras/mmu_machine.py',
                  'extras/mmu/unit/mmu_analog_counter.py', 'moonraker/components/mmu_server.py'):
         if not os.path.exists(os.path.join(out, need)):
