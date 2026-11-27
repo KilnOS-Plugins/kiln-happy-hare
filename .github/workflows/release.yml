@@ -77,7 +77,7 @@ jobs:
                      "python3 -m zipfile -e /tmp/happy-hare-$GITHUB_REF_NAME.zip /data/ad5x/plugins/happy-hare" \
                      'chown -R klipper:klipper /data/ad5x/plugins/happy-hare' \
                      '```'
-              printf '%s\n\n' "(copy the zip to \`/tmp\` first), then \`RESTART\`. To go back: delete \`/data/ad5x/plugins/happy-hare\`, move \`/data/ad5x/happy-hare.prev\` back, \`RESTART\`."
+              printf '%s\n\n' "(copy the zip to \`/tmp\` first, with \`scp -O\`: Kiln OS has no SFTP server), then \`RESTART\`. To go back: delete \`/data/ad5x/plugins/happy-hare\`, move \`/data/ad5x/happy-hare.prev\` back, \`RESTART\`."
               cat notes.md; } > notes.rc && mv notes.rc notes.md ;;
           esac
           if [ -s notes.md ]; then printf '\n---\n' >> notes.md; fi

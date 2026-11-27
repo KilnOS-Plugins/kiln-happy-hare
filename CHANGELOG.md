@@ -45,12 +45,25 @@ What changed for people using the plugin. A release's notes on GitHub come from 
     runs at half its run current (`sync_gear_current: 50`, Happy Hare's default), not 100%.
   - A slot parked above the toolhead stays parked after a recovery, instead of being pulled back the
     whole bowden.
+  - **A parked strand that was pulled back is fed on, not given up on.** If a slot's filament was
+    pulled back by hand since it was parked, its next tool change or preload doesn't stop 125 mm
+    short of the toolhead with an error: while that slot's wheel shows the strand moving, it keeps
+    feeding until the toolhead sensor (or the combiner) stops it, up to the slot's whole tube.
+  - **A spool pulled out during a print and put back is fed the whole way in.** Pulling it cleared
+    the slot, but the slot still counted as parked, so the new strand was only fed 195 mm.
+  - **`MMU_CALIBRATE_ENCODER` is safe on a parked slot.** It feeds forward first, and a parked strand
+    has no room for that above the combiner. It now pulls the strand back first, calibrates over
+    200 mm (at most what keeps the strand in the wheel), and returns it to its park. With the
+    tool loaded it refuses: unload first.
+  - Happy Hare's error, auto-home and post-preload macros are defined, so an MMU error no longer
+    also logs `Unknown command:"_MMU_ERROR"`.
   - mmu.log no longer writes every line twice after a Klipper restart.
 
 **After updating:** the four new encoders start with the old shared calibration: the plugin copies it
 (`mmu_ifs_encoder_encoder_resolution`, and the clog detection length) to each slot's encoder at the
-first start, once, and never over a slot's own value. The wheels are the same part, but for each
-wheel's own value run `MMU_CALIBRATE_ENCODER` with that slot selected.
+first start, once, and never over a slot's own value. The wheels are the same part, so that is
+enough. For a slot's own value: unload the tool (`MMU_UNLOAD`), select the slot
+(`MMU_SELECT GATE=n`) and run `MMU_CALIBRATE_ENCODER`.
 
 Tested on Kiln OS v1.0.0.
 
